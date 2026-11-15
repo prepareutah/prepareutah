@@ -2,12 +2,12 @@
    Content lives in site/assets/js/*.js and is shared with the browser. Output: *.html in site/. */
 const fs = require("fs"), path = require("path");
 const ROOT = path.resolve(__dirname, "..", "site");
-["sources", "hazards", "planner", "icons", "render", "alerts", "guides"].forEach(f => require(path.join(ROOT, "assets/js", f + ".js")));
+["sources", "hazards", "planner", "icons", "render", "alerts", "guides", "wind", "windmap"].forEach(f => require(path.join(ROOT, "assets/js", f + ".js")));
 const UR = globalThis.UR;
 const ic = UR.icon, cite = UR.cite, esc = UR.esc;
 const NAME = "Prepare Utah";
 const SITE = "https://prepareutah.com/";
-const VERSION = "2026-10-24";
+const VERSION = "2026-11-14";
 // Sister site. Linked from the footer, home page, earthquake page, Sources and About.
 const SISTER = { name: "FaultLine Utah", url: "https://faultlineutah.com/" };
 const ext = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}<span class="sr-only"> (opens in a new tab)</span></a>`;
@@ -321,7 +321,7 @@ UR.hazards.forEach(h => {
       <div class="card"><h3><span class="num" style="background:var(--rock)">2</span> During</h3>${list(h.during)}</div>
       <div class="card"><h3><span class="num" style="background:var(--sage-dark)">3</span> After</h3>${list(h.after)}</div>
     </div>
-    ${h.extra ? `<h2 style="margin-top:28px">${esc(h.extraTitle)}</h2><div>${cite(h.extra)}</div>` : ""}
+    ${h.extra ? `<h2${h.extraId ? ` id="${h.extraId}"` : ""} style="margin-top:28px">${esc(h.extraTitle)}</h2><div>${cite(h.extra)}</div>` : ""}
   </div>
   <aside class="hz-aside">
     <div class="card">
@@ -340,7 +340,7 @@ UR.hazards.forEach(h => {
     </div>
   </aside>
 </div>`;
-  emit(`hazards/${h.id}.html`, { title: `${h.name} in Utah · ${NAME}`, desc: h.summary.replace(/<[^>]+>/g, ""), root, active: "hazards", page: "hazard", body, scripts: h.id === "earthquake" ? ["quakes"] : [] });
+  emit(`hazards/${h.id}.html`, { title: `${h.name} in Utah · ${NAME}`, desc: h.summary.replace(/<[^>]+>|\[\[[^\]]+\]\]/g, "").replace(/\s+/g, " ").trim(), root, active: "hazards", page: "hazard", body, scripts: h.id === "earthquake" ? ["quakes"] : [] });
 });
 emit("hazards/index.html", {
   title: `Utah hazards · ${NAME}`, desc: "Plain-language, sourced guides to every major Utah hazard.", root: "../", active: "hazards", page: "hazards",
@@ -382,6 +382,35 @@ const TOOLS = {
 </form>`
 };
 
+// ---------------- guide widgets (drawn by assets/js/windmap.js, so the browser can redraw them)
+const monthYear = iso => new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const WIDGETS = {
+  windmap: () => {
+    const W = UR.wind, key = "all.all", opt = a => a.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+    const span = st => `${esc(st.short)}: ${monthYear(st.first)} to ${monthYear(st.last)}. [[${st.src}]]`;
+    const count = ["no", "one", "two", "three", "four"][W.stations.length] || String(W.stations.length);
+    // The roses are drawn to a fixed 30% rim (windmap.js), so new data must not outgrow it silently.
+    const peak = Math.max(...W.stations.flatMap(st => Object.values(st.views).flatMap(v => v.n ? UR.windToward(v, 16) : [0])));
+    if (peak > 30) throw new Error(`wind rose: a wedge holds ${peak.toFixed(1)}% of hours, more than the 30% rim in windmap.js`);
+    return `<div class="card windbox" data-windmap>
+  <div class="wind-controls no-print" hidden><label><span>Season</span><select data-wind-season>${opt(W.seasons)}</select></label><label><span>Time of day</span><select data-wind-time>${opt(W.times)}</select></label></div>
+  <noscript><p class="small muted">The season and time-of-day switches need JavaScript. Without it, this map shows the whole year and all hours.</p></noscript>
+  <div class="wind-cols">
+    <figure class="wind-fig">${UR.windMapSVG(key)}<figcaption class="small muted">The ${count} large circles are weather stations. The numbered squares are the refineries, named in the list below. Each wedge starts at the center of a circle and reaches out toward where the wind blew, which is the way smoke would drift. Bigger wedges mean more hours: the dashed rings mark 10% and 20% of hours, and the outer circle 30%. The map splits the wind into 16 directions. The list and table group them into 8, so their percentages are larger than a single wedge.</figcaption></figure>
+    <div class="wind-side">
+      <h3>Where smoke would most often drift</h3>
+      <div data-wind-list aria-live="polite">${UR.windList(key)}</div>
+      <details class="wind-details"><summary>See all the numbers</summary><div data-wind-table>${UR.windTable(key)}</div></details>
+      <h3 style="margin-top:14px">Refineries on the map</h3>
+      <ol class="wind-key small">${W.map.refineries.map(r => `<li>${esc(r.name)}, ${esc(r.city)}</li>`).join("")}</ol>
+      <p class="small muted" style="margin:6px 0 0">${cite("Names and cities: [[eia-refcap]] [[hfs-woods-cross]] [[chevron-contact]]")}</p>
+    </div>
+  </div>
+  <p class="small muted" style="margin:12px 0 0">${cite(`This is history, not a forecast. In a real emergency, go by what officials tell you. Hourly wind readings, counted by Prepare Utah. &quot;Calm or shifting&quot; means there was no steady wind direction to count. It is counted differently at each station, so don't compare one station's number with the other's. At the airport, it means wind under about 3 mph (3 knots), plus hours with a light wind that kept changing direction. At the Utah Department of Transportation road weather station on Legacy Parkway, which measures lighter wind, it means wind under about 1 mph (1 knot). ${W.stations.map(span).join(" ")} Roads and water: U.S. Census Bureau. [[census-tiger]]`)}</p>
+</div>`;
+  }
+};
+
 // ---------------- guides
 UR.guides.forEach(g => {
   const others = UR.guides.filter(o => o.id !== g.id);
@@ -396,7 +425,7 @@ UR.guides.forEach(g => {
   <div class="guide-body">
     ${g.summary ? `<p style="font-size:1.05rem">${cite(g.summary)}</p>` : ""}
     ${g.tool ? TOOLS[g.tool]() : ""}
-    ${g.sections.map(s => `<h2${s.id ? ` id="${s.id}"` : ""}>${esc(s.title)}</h2>${s.intro ? `<p>${cite(s.intro)}</p>` : ""}${s.items ? list(s.items) : ""}`).join("\n    ")}
+    ${g.sections.map(s => `<h2${s.id ? ` id="${s.id}"` : ""}>${esc(s.title)}</h2>${s.intro ? `<p>${cite(s.intro)}</p>` : ""}${s.widget ? WIDGETS[s.widget]() : ""}${s.items ? list(s.items) : ""}`).join("\n    ")}
   </div>
   <aside class="hz-aside">
     ${g.help ? `<div class="card"><h3>${ic("live")} Where to get help</h3><ul class="live-list">${g.help.map(l => `<li><a href="${esc(UR.sources[l.src].url)}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>${esc(l.label)}<span class="sr-only"> (opens in a new tab)</span></a></li>`).join("")}</ul></div>` : ""}
@@ -410,7 +439,7 @@ UR.guides.forEach(g => {
     </div>
   </aside>
 </div>`;
-  emit(`guides/${g.id}.html`, { title: `${g.name} · ${NAME}`, desc: g.tagline.replace(/<[^>]+>|\[\[[^\]]+\]\]/g, "").trim(), root: "../", active: "guides", page: "guide", body, scripts: g.tool ? ["tools"] : [] });
+  emit(`guides/${g.id}.html`, { title: `${g.name} · ${NAME}`, desc: g.tagline.replace(/<[^>]+>|\[\[[^\]]+\]\]/g, "").replace(/\s+/g, " ").trim(), root: "../", active: "guides", page: "guide", body, scripts: (g.tool ? ["tools"] : []).concat(g.scripts || []) });
 });
 emit("guides/index.html", {
   title: `Guides · ${NAME}`, desc: "Plain-language guides to insurance, food storage, evacuating, recovering, and planning with your family and neighbors in Utah.", root: "../", active: "guides", page: "guides",
@@ -529,14 +558,14 @@ emit("about.html", {
   body: `<section class="hz-hero"><div class="wrap"><span class="eyebrow">About</span><h1>About this project</h1><p class="lede" style="max-width:44em">A calm, sourced, Utah-specific place to get your household ready, from a neighbor who lives here.</p></div></section>
 <section class="block"><div class="wrap grid two" style="align-items:start">
   <div>
-    <div class="note warm" style="margin-bottom:18px"><strong>Placeholder text.</strong> The founder will replace this section. Everything below in this column is a draft to edit.</div>
+    <div class="note warm" style="margin-bottom:18px"><strong>Welcome.</strong>Let's keep each other safe; let's stay prepared.</div>
     <h2>Why I built this</h2>
-    <p>[Founder: a few sentences in your own voice. For example: I'm a Utah writer, artist, and speaker. I live on the Wasatch Front, I've felt the ground move, and I've breathed inversion air for more winters than I can count. I wanted one calm place that turns all of Utah's good-but-scattered guidance into something a family can actually do this weekend.]</p>
+    <p>[Emergency prepardeness is a daunting task, and there are too many sources scattered about the internet. Prepare Utah aims to be a hub of emergency prepardeness guidance and resource for Utahns and others abroad so that all may be as prepared as they can be for any given event.]</p>
     <h2>Who I am</h2>
-    <p>[Founder bio.]</p>
+    <p>[Born and Raised a Boy Scout in Utah, just wanting my neighbors to have an easy source for preparedness.]</p>
     <h2>How this is made</h2>
-    <p>This site translates official sources (Be Ready Utah, the Utah Geological Survey, Utah DHHS, Utah DEQ, USGS, NWS, the Utah Avalanche Center, Ready.gov, CDC, USU Extension, and others) into plain language. It doesn't run its own hazard models. Figures are reused from the founder's ${SISTER.name} and HiveWatch Utah plans, which were checked in October 2026. See <a href="sources.html">all sources</a>.</p>
-    <p>Before a public launch, the plan is to have a seismologist, a medical advisor, and a pharmacist review the hazard and health wording. [Founder: update when advisors sign on.]</p>
+    <p>This site translates official sources (Be Ready Utah, the Utah Geological Survey, Utah DHHS, Utah DEQ, USGS, NWS, the Utah Avalanche Center, Ready.gov, CDC, USU Extension, and others) into plain language. It doesn't run its own hazard models. <a href="sources.html">all sources</a>.</p>
+    <p></p>
     <h2 id="sister">Our sister site</h2>
     <p>${NAME} covers every hazard at the household level. For earthquakes in depth, visit ${ext(SISTER.url, SISTER.name)}. Type in an address to see nearby faults, liquefaction, and building-code shaking, explore the statewide fault map, or check whether an older brick building may be unreinforced masonry. Both sites follow the same rules: plain language, a source behind every fact, and no tracking.</p>
     <h2>Independent</h2>
@@ -559,7 +588,7 @@ emit("about.html", {
     </div>
     <div class="card" style="margin-top:16px">
       <h2>Contact</h2>
-      <p>[Founder: add a contact email or form link. Corrections are welcome; please include a source.]</p>
+      <p>[Founder: Pending. Corrections are welcome; please include a source.]</p>
     </div>
   </div>
 </div></section>`

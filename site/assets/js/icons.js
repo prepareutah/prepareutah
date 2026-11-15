@@ -44,6 +44,7 @@
     storm: '<path d="M7 15.5a4 4 0 01.3-8A5.5 5.5 0 0118 8.5a3.5 3.5 0 01-.5 7"/><path d="M13 12l-3 5h4l-2 4.5"/>',
     tap: '<path d="M3 10h10a4 4 0 014 4v1h-4v-1H3z"/><path d="M8 10V6M5 6h6"/><path d="M15 19c0 1.1-.9 2-2 2s-2-.9-2-2c0-1.2 2-3.5 2-3.5s2 2.3 2 3.5z"/>',
     flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 001.7 3h10.6a2 2 0 001.7-3l-5-9V3"/><path d="M7.5 15h9"/>',
+    pump: '<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M6.5 6.5h5v4h-5z"/><path d="M14 9h1.5A1.5 1.5 0 0 1 17 10.5V16a1.5 1.5 0 0 0 3 0V8.5L17.5 6"/>',
     battery: '<rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/><path d="M6 10v4M10 10v4"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     bell: '<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4z"/><path d="M10 20a2 2 0 004 0"/>',

@@ -9,7 +9,8 @@ const UR = globalThis.UR;
 // These sites refuse scripted requests (403, 429, even a fake 404), at least from GitHub's servers,
 // but load in a browser: "check by hand."
 const BLOCKS_BOTS = ["cdc.gov", "nhtsa.gov", "fema.gov", "cpsc.gov", "bls.gov", "doi.gov", "fda.gov", "usda.gov", "foodsafety.gov", "ftc.gov", "osha.gov", "travel.state.gov", "oley.org", "deseret.com",
-  "doi.org", "naic.org", "ncbi.nlm.nih.gov", "utahavalanchecenter.org", "shakeout.org", "fcc.gov", "byu.edu"];
+  "doi.org", "naic.org", "ncbi.nlm.nih.gov", "utahavalanchecenter.org", "shakeout.org", "fcc.gov", "byu.edu",
+  "marathonpetroleum.com", "hfsinclair.com", "ir.enterpriseproducts.com", "mdpi.com", "journals.ametsoc.org", "newspapers.lib.utah.edu"];
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
 
 const links = new Map();  // url -> where it's used

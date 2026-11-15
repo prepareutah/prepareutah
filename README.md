@@ -4,9 +4,9 @@
 
 - **Make my plan** (`start.html`): a short questionnaire (county, setting, home and cooling, household, health, diets and allergens, work and getting around, resources).
 - **My plan** (`plan.html`): the personal plan it builds. A free "first hour" starter list, priority bands for 15 Utah hazards plus money, the household's county alert sign-up, checklists for 7, 14, 30 and 90 days sized to the household, a budget-aware "buy first" list, downloadable calendar reminders (.ics, made in the browser), cards for diets and work, before/during/after actions, and a print/PDF view.
-- **Hazards** (`hazards/`): one stand-alone guide per hazard, with live official links.
+- **Hazards** (`hazards/`): one stand-alone guide per hazard, with live official links. The water page also keeps a record of documented attacks on and accidents involving Utah's water supplies (the `extra` field of the `water` entry in `hazards.js`).
 - **Alerts** (`alerts.html`): how to get emergency alerts in every Utah county, plus phone settings, weather radio, and what "Ready, Set, Go" means.
-- **Guides** (`guides/`): 90 days without utilities (built on the FEMA-funded magnitude 7.0 Salt Lake City segment scenario, where water stays out longest), family communication plan (fill in, save in the browser, print folding wallet cards), food storage, insurance, stay or go, after a disaster, and a neighborhood plan worksheet. The Guides page also links Be Ready Utah's business, school, community and CERT sections.
+- **Guides** (`guides/`): 90 days without utilities (built on the FEMA-funded magnitude 7.0 Salt Lake City segment scenario, where water stays out longest), refinery disaster and fuel shortage (a worst-case guide to losing all five Utah refineries at once, with a wind-history map of where smoke would drift), family communication plan (fill in, save in the browser, print folding wallet cards), food storage, insurance, stay or go, after a disaster, and a neighborhood plan worksheet. The Guides page also links Be Ready Utah's business, school, community and CERT sections.
 - **En español** (`es/`): a Spanish essentials page (alerts, first-hour steps, key risks, official Spanish resources). It was translated here and needs review by a native speaker before it's promoted.
 - **Sources** (`sources.html`) and **About** (`about.html`): every source, privacy, the disclaimer, and the sister-site note.
 
@@ -22,13 +22,16 @@ site/                     ← the website; this folder is what gets published
   assets/js/hazards.js    ← hazard guide text
   assets/js/planner.js    ← county bands, checklist items, quantities, household cards, diets, work, first hour
   assets/js/alerts.js     ← county alert sign-ups and statewide alert steps
-  assets/js/guides.js     ← guide text (90 days without utilities, family plan, food, insurance, stay or go, recovery, neighbors)
+  assets/js/guides.js     ← guide text (90 days without utilities, refineries, family plan, food, insurance, stay or go, recovery, neighbors)
+  assets/js/wind.js       generated wind history and base map for the refinery guide (made by scripts/wind.js; don't edit by hand)
+  assets/js/windmap.js    draws the wind map; shared by the build and the browser
   assets/js/tools.js      the family plan and neighborhood forms (saved in the browser, wallet cards)
   assets/js/*.js          app code (questionnaire, dashboard, USGS list, citations)
   sitemap.xml             generated with the pages
   robots.txt, _headers
 scripts/
   build.js                regenerates the HTML pages from the content files (Node, no npm install)
+  wind.js                 rebuilds assets/js/wind.js from downloaded weather records (see "Wind map data")
   serve.py                local preview server
   test_site.py            headless browser tests (Playwright)
   screenshots.py          test screenshots and a sample printed plan
@@ -88,6 +91,19 @@ FaultLine Utah is linked from the footer of every page, the home page (sister-si
 - **First hour:** five free steps everyone gets (alerts, meeting places, smoke-alarm test, shutoffs, a water start) plus personal ones while the total stays within 60 minutes. Steps that match a checklist item share its id, so checking either checks both.
 - **Diet text box:** `UR.detectDiets` matches what people type against each diet's `words` and checks the boxes it recognizes, only in the browser. Allergen words must be whole words and count only when the text mentions an allergy or names no other diet ("eggplant" isn't an egg allergy). Anything unrecognized is shown in the plan as the person's own note.
 - **Buy first:** the most protective purchases from the 7- and 14-day tiers. Items over the household's budget move down the list. Critical medical items (prescriptions, backup power for medical equipment, formula) always stay near the top.
+
+## Wind map data
+
+The refinery guide's wind map is drawn from ten years of hourly wind readings (November 2016 through October 2026) at two stations: Salt Lake City International Airport and the Utah DOT road weather station on Legacy Parkway in West Bountiful, both archived by the Iowa Environmental Mesonet. The roads and the lake outline come from the U.S. Census Bureau. `scripts/wind.js` counts the readings by direction, season and time of day and writes `site/assets/js/wind.js`. Its header lists the exact files to download and the method.
+
+```bash
+node scripts/wind.js /path/to/folder-with-downloads   # then: node scripts/build.js
+```
+
+- The raw downloads are large and stay out of the repo. To refresh the map (once a year is plenty), download the newer records, change `START` and `END` in `scripts/wind.js`, and run both commands.
+- The Utah DOT station on I-15 at 500 South was left out on purpose: for about five years its directions read 25 to 30 degrees off its own earlier and later record.
+- "Calm or shifting" is counted differently at the two stations (the airport gives no direction under 3 knots; the road station measures lighter wind), so the page tells readers not to compare those two numbers.
+- The numbers written in the guide's wind section (for example the share of night hours blowing toward the northwest) come from this data. If you regenerate it, re-check those sentences.
 
 ## Keeping links fresh
 
@@ -164,6 +180,9 @@ The repo's Settings → Pages already has Source set to **GitHub Actions** and `
 - [ ] Registered dietitian: the diet tips (the soft-foods and halal tips rest on thin sources).
 - [ ] Utah emergency manager: the county priority bands.
 - [ ] Fire marshal and a licensed plumber: the 90-day guide's heating, fuel storage, generator and pipe-draining text.
+- [ ] Hazmat or fire professional (South Davis Metro Fire, Salt Lake City Fire, or a county LEPC): the refinery guide's "near the refineries" and "smoke and fumes" sections.
+- [ ] Meteorologist or air-quality scientist: the refinery guide's wind section and map method.
+- [ ] Utah Division of Drinking Water or a water system operator: the water page's record of attacks and accidents. Re-check it once a year and add new incidents; the first state report on water-system security under H.B. 19 was due Oct. 31, 2026.
 
 ## Disclaimer
 
