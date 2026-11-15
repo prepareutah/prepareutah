@@ -615,7 +615,7 @@
       "Union Pacific runs 1,265 miles of track in Utah, and hazardous waste is among the top commodities it carries in the state. [[up-utah]]",
       "Salt Lake County's hazmat plan names I-15, I-215, and I-80, three major rail lines, and several pipelines as hazmat threats. [[slco-hazmat]]",
       "Utah's five refineries sit along I-15 between Rose Park and Bountiful. [[utah-gas-report]]",
-      "Live or work near them? The <a href=\"/guides/refineries.html\">Refinery disaster and fuel shortage</a> guide has a wind map of where smoke would drift and what to do.",
+      "Live or work near them? The <a href=\"/hazards/refineries.html\">Refinery disaster and fuel shortage</a> page has a wind map of where smoke would drift and what to do.",
       "In 2005, a leaking rail tank car in South Salt Lake forced about 3,000 residents to evacuate and closed I-15. In 2009, a refinery explosion in Woods Cross damaged more than 100 homes. [[fhwa-roper]] [[csb-silver-eagle]]",
       "In 2022, a burning chemical truck on I-80 led residents near Tollgate in Summit County to shelter in place. [[ksl-tollgate]]"
     ],

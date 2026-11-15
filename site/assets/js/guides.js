@@ -1,7 +1,8 @@
 /* Prepare Utah - topic guides that cut across hazards: planning, money, food, leaving, recovering.
    Same rules as hazards.js: every factual sentence ends with [[source-id]] (see sources.js).
    sections: [{ title, intro?, items? }]. tool: an interactive form defined in scripts/build.js (TOOLS)
-   and run by assets/js/tools.js. help: links shown in the "Where to get help" box. */
+   and run by assets/js/tools.js. help: links shown in the "Where to get help" box.
+   hub: "hazards" lists and serves a page under Hazards instead of Guides (the refinery page). */
 (function (root) {
   var G = [];
 
@@ -72,7 +73,7 @@
         "In federal lab tests, sealed gasoline with 10% ethanol still met fuel-quality standards after a year, though fuel stored other ways may age differently. If a generator will sit for more than a few months, Be Ready Utah says to use up the fuel in its tank or add fuel stabilizer. Use stored fuel over time and replace it with fresh fuel. [[ornl-fuel]] [[br-generator]] [[lehi-fuel]]",
         "Store propane cylinders upright and outdoors, away from heat and direct sunlight. Never keep them in a basement, where heavier-than-air propane can collect. Utah requires stored cylinders to sit at least 10 feet from doorways and other building openings. [[dem-cooking]] [[ifc-lpg]] [[ut-code-15a-5-206]]",
         "A 20-pound propane tank gives about 18 to 20 hours of cooking. [[dem-cooking]]",
-        "What if the refineries themselves are knocked out? The <a href=\"/guides/refineries.html\">Refinery disaster and fuel shortage</a> guide covers a statewide fuel shortage.",
+        "What if the refineries themselves are knocked out? The <a href=\"/hazards/refineries.html\">Refinery disaster and fuel shortage</a> page covers a statewide fuel shortage.",
         "Don't refill disposable 1-pound propane bottles. Bottles marked \"DOT-39\" are made to be used only once, and federal law forbids transporting one that's been refilled. [[cfr-dot39]]"
       ] },
       { title: "Water for 90 days", items: [
@@ -165,7 +166,7 @@
 
   G.push({
     id: "refineries", name: "Refinery disaster and fuel shortage", short: "Explosions, smoke, wind, and a long fuel shortage",
-    icon: "pump", color: "#6B4A3A", scripts: ["wind", "windmap"],
+    icon: "pump", color: "#6B4A3A", scripts: ["wind", "windmap"], hub: "hazards",   // listed and served under Hazards
     tagline: "All five of Utah's oil refineries sit along one short stretch of I-15, from Rose Park in Salt Lake City to Bountiful. [[utah-gas-report]] In a worst case, if a major earthquake wrecked them all at once, people nearby could face fire and smoke, and Utah could run short of gasoline and diesel. [[eeri-scenario]] [[csb-husky]] [[irev-utah]]",
     summary: "This is a worst case, not a prediction. But a 2019 planning report produced with Utah's energy office names a major earthquake as the greatest threat to the state's fuel supply. It says a magnitude 7.0 earthquake on the Salt Lake City segment of the Wasatch fault would likely affect oil and fuel pipelines, production, and delivery. [[irev-utah]] The FEMA-funded scenario for that earthquake warns of ruptured tanks, fire that could spread through a refinery, and long shutdowns. [[eeri-scenario]] This guide has two parts: staying safe near the refineries, and getting through a long fuel shortage anywhere in Utah.",
     sections: [

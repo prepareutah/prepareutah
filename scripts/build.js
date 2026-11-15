@@ -129,8 +129,12 @@ function sisterCard() {
 </div>`;
 }
 
+// A guide-style page can live under Hazards (hub: "hazards" in guides.js); everything else is under Guides.
+const gHub = g => g.hub || "guides";
+const GUIDES = UR.guides.filter(g => gHub(g) === "guides");
+const HAZARD_PAGES = UR.guides.filter(g => gHub(g) === "hazards");
 function guideCard(g, root) {
-  return `<a class="card hazard-card" href="${root}guides/${g.id}.html"><span class="hz-icon" style="background:${g.color}">${ic(g.icon)}</span><span><h3>${esc(g.name)}</h3><p>${esc(g.short)}</p></span></a>`;
+  return `<a class="card hazard-card" href="${root}${gHub(g)}/${g.id}.html"><span class="hz-icon" style="background:${g.color}">${ic(g.icon)}</span><span><h3>${esc(g.name)}</h3><p>${esc(g.short)}</p></span></a>`;
 }
 
 function hazardCard(h, root) {
@@ -176,10 +180,10 @@ emit("index.html", {
 </section>
 <section class="block alt">
   <div class="wrap">
-    <span class="eyebrow">${["", "", "", "", "", "", "", "", "", "", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen"][UR.hazards.length - 1] || UR.hazards.length - 1} hazards plus money</span>
+    <span class="eyebrow">${["", "", "", "", "", "", "", "", "", "", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen"][UR.hazards.length - 1 + HAZARD_PAGES.length] || UR.hazards.length - 1 + HAZARD_PAGES.length} hazards plus money</span>
     <h2>Every Utah hazard, one calm place</h2>
     <p class="muted">Each page stands on its own: why it matters in Utah, who's most affected, what to do before, during, and after, and where to check live conditions.</p>
-    <div class="grid three">${UR.hazards.map(h => hazardCard(h, "")).join("")}</div>
+    <div class="grid three">${UR.hazards.map(h => hazardCard(h, "")).join("")}${HAZARD_PAGES.map(g => guideCard(g, "")).join("")}</div>
   </div>
 </section>
 <section class="block">
@@ -187,7 +191,7 @@ emit("index.html", {
     <span class="eyebrow">Guides</span>
     <h2>Beyond any one hazard</h2>
     <p class="muted">Insurance, food storage, when to leave, what to do afterward, and plans for your family and your neighbors.</p>
-    <div class="grid three">${UR.guides.map(g => guideCard(g, "")).join("")}</div>
+    <div class="grid three">${GUIDES.map(g => guideCard(g, "")).join("")}</div>
   </div>
 </section>
 <section class="block">
@@ -336,7 +340,7 @@ UR.hazards.forEach(h => {
     </div>
     <div class="card no-print" style="margin-top:14px">
       <h3>Other hazards</h3>
-      <ul class="small">${others.map(o => `<li><a href="${o.id}.html">${esc(o.name)}</a></li>`).join("")}</ul>
+      <ul class="small">${others.concat(HAZARD_PAGES).map(o => `<li><a href="${o.id}.html">${esc(o.name)}</a></li>`).join("")}</ul>
     </div>
   </aside>
 </div>`;
@@ -345,7 +349,7 @@ UR.hazards.forEach(h => {
 emit("hazards/index.html", {
   title: `Utah hazards · ${NAME}`, desc: "Plain-language, sourced guides to every major Utah hazard.", root: "../", active: "hazards", page: "hazards",
   body: `<section class="hz-hero"><div class="wrap"><span class="eyebrow">Hazard guides</span><h1>Utah hazards, one at a time</h1><p class="lede" style="max-width:44em">Each guide stands on its own: why it matters here, who's most affected, what to do before, during, and after, and links to live official conditions. Want it all sized to your household? <a href="../start.html">Make your plan</a>.</p></div></section>
-<section class="block"><div class="wrap"><div class="grid three">${UR.hazards.map(h => hazardCard(h, "../")).join("")}</div></div></section>`
+<section class="block"><div class="wrap"><div class="grid three">${UR.hazards.map(h => hazardCard(h, "../")).join("")}${HAZARD_PAGES.map(g => guideCard(g, "../")).join("")}</div></div></section>`
 });
 
 // ---------------- interactive guide tools (saved only in this browser by assets/js/tools.js)
@@ -413,10 +417,11 @@ const WIDGETS = {
 
 // ---------------- guides
 UR.guides.forEach(g => {
-  const others = UR.guides.filter(o => o.id !== g.id);
+  const hub = gHub(g), inHazards = hub === "hazards";
+  const others = inHazards ? UR.hazards.concat(HAZARD_PAGES).filter(o => o.id !== g.id) : GUIDES.filter(o => o.id !== g.id);
   const body = `
 <section class="hz-hero"><div class="wrap">
-  <p class="small" style="margin:0 0 10px"><a href="index.html">${ic("back")} All guides</a></p>
+  <p class="small" style="margin:0 0 10px"><a href="index.html">${ic("back")} ${inHazards ? "All hazards" : "All guides"}</a></p>
   <div class="head"><span class="hz-icon" style="background:${g.color}">${ic(g.icon)}</span><h1>${esc(g.name)}</h1></div>
   <p class="lede" style="font-size:1.12rem;max-width:46em">${cite(g.tagline)}</p>
   <div class="btn-row no-print">${g.tool ? "" : `<a class="btn small" href="../start.html">Make my plan ${ic("arrow")}</a>`}<button class="btn small secondary" type="button" data-print>${ic("print")} Print this page</button></div>
@@ -434,17 +439,25 @@ UR.guides.forEach(g => {
       <ul class="small">${g.learn.map(id => `<li><a href="${esc(UR.sources[id].url)}" target="_blank" rel="noopener">${esc(UR.sources[id].title)}</a> <span class="muted">(${esc(UR.sources[id].pub)})</span></li>`).join("")}</ul>
     </div>
     <div class="card no-print" style="margin-top:14px">
-      <h3>Other guides</h3>
+      <h3>${inHazards ? "Other hazards" : "Other guides"}</h3>
       <ul class="small">${others.map(o => `<li><a href="${o.id}.html">${esc(o.name)}</a></li>`).join("")}</ul>
     </div>
   </aside>
 </div>`;
-  emit(`guides/${g.id}.html`, { title: `${g.name} · ${NAME}`, desc: g.tagline.replace(/<[^>]+>|\[\[[^\]]+\]\]/g, "").replace(/\s+/g, " ").trim(), root: "../", active: "guides", page: "guide", body, scripts: (g.tool ? ["tools"] : []).concat(g.scripts || []) });
+  emit(`${hub}/${g.id}.html`, { title: `${g.name} · ${NAME}`, desc: g.tagline.replace(/<[^>]+>|\[\[[^\]]+\]\]/g, "").replace(/\s+/g, " ").trim(), root: "../", active: hub, page: "guide", body, scripts: (g.tool ? ["tools"] : []).concat(g.scripts || []) });
 });
+// Pages that moved: a small page at the old address sends readers (and search engines, via canonical) to the new one.
+const MOVED = { "guides/refineries.html": "hazards/refineries.html" };
+Object.entries(MOVED).forEach(([from, to]) => write(from, `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Moved · ${NAME}</title>
+<meta name="robots" content="noindex"><link rel="canonical" href="${SITE}${to}"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<meta http-equiv="refresh" content="0; url=../${to}"></head>
+<body><p>This page moved to <a href="../${to}">${SITE}${to}</a>.</p></body></html>
+`));
 emit("guides/index.html", {
   title: `Guides · ${NAME}`, desc: "Plain-language guides to insurance, food storage, evacuating, recovering, and planning with your family and neighbors in Utah.", root: "../", active: "guides", page: "guides",
   body: `<section class="hz-hero"><div class="wrap"><span class="eyebrow">Guides</span><h1>Guides for every household</h1><p class="lede" style="max-width:44em">The things that matter in every kind of emergency: paying for it, feeding everyone, deciding when to leave, getting back on your feet, and planning with the people around you.</p></div></section>
-<section class="block"><div class="wrap"><div class="grid three">${UR.guides.map(g => guideCard(g, "../")).join("")}</div></div></section>
+<section class="block"><div class="wrap"><div class="grid three">${GUIDES.map(g => guideCard(g, "../")).join("")}</div></div></section>
 <section class="block alt"><div class="wrap">
   <span class="eyebrow">Beyond your household</span>
   <h2>For businesses, schools, and communities</h2>
