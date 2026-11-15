@@ -649,7 +649,7 @@
         "Base your savings goal on what past surprises cost you, and save tax refunds or windfalls when income is uneven. [[cfpb-fund]]",
         "Keep some cash in small bills; ATMs and card readers may not work. [[ready-fin]]"
       ],
-      self: ["In Utah, self-employment income may not qualify for regular unemployment benefits. After a declared major disaster, self-employed people may get Disaster Unemployment Assistance for up to 26 weeks. [[dws-ui-guide]] [[dol-dua]]"],
+      self: ["In Utah, self-employment income may not qualify for regular unemployment benefits. After a declared major disaster, self-employed people may get Disaster Unemployment Assistance for up to 26 weeks. [[dws-ui-notice]] [[dws-ui-guide]] [[dol-dua]]"],
       travel: [
         "Pick an out-of-state contact everyone checks in with. [[br-comm]]",
         "Fill out FEMA's family communication card and keep copies in every wallet. [[fema-comm-card]]",
