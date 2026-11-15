@@ -294,7 +294,8 @@
       { label: "Davis County emergency alerts: sign up", src: "davis-alerts" },
       { label: "Utah Poison Control: 1-800-222-1222", src: "utah-poison" },
       { label: "Hourly wind forecast for the refinery area", src: "nws-hourly-woods-cross" },
-      { label: "Air quality right now (Utah DEQ)", src: "air-utah" }
+      { label: "Wasatch Front air quality right now (HiveAir Utah)", src: "hiveair" },
+      { label: "Statewide air quality right now (Utah DEQ)", src: "air-utah" }
     ],
     learn: ["eeri-scenario", "irev-utah", "utah-gas-report", "csb-silver-eagle", "dhhs-eq-plan", "epa-smoke-guide"]
   });

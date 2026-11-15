@@ -643,6 +643,7 @@
     // ---------- Air quality & inversions ----------
     "deq-inv":     { pub: "Utah DEQ, Division of Air Quality", title: "Inversions", url: "https://deq.utah.gov/daq/inversions" },
     "air-utah":    { pub: "Utah DEQ, Division of Air Quality", title: "air.utah.gov: current conditions, forecasts, burn status", url: "https://air.utah.gov/" },
+    "hiveair":     { pub: "HiveAir Utah", title: "Today's air quality and burn days for the Wasatch Front (Utah DAQ and EPA AirNow data)", url: "https://hiveairutah.com/" },
     "air-utah-forecast": { pub: "Utah DEQ, Division of Air Quality", title: "Air quality forecast and action days", url: "https://air.utah.gov/forecast.php" },
     "deq-ozone":   { pub: "Utah DEQ, Division of Air Quality", title: "Northern Wasatch Front ozone", url: "https://deq.utah.gov/air-quality/northern-wasatch-front-ozone" },
     "deq-uinta":   { pub: "Utah DEQ, Division of Air Quality", title: "Uinta Basin ozone (winter inversions)", url: "https://deq.utah.gov/daq/uinta-basin-ozone" },

@@ -158,7 +158,8 @@
       { label: "Great Salt Lake level (USGS gauge)", src: "usgs-gsl-gauge" },
       { label: "USGS Great Salt Lake Hydro Mapper", src: "usgs-gsl-mapper" },
       { label: "Utah drought conditions (Drought.gov)", src: "drought-gov" },
-      { label: "Utah air quality now", src: "air-utah" }
+      { label: "Wasatch Front air quality now (HiveAir Utah)", src: "hiveair" },
+      { label: "Statewide air quality now (Utah DEQ)", src: "air-utah" }
     ],
     learn: ["gsl-plan", "dwre-gsl", "deq-gsl-dust", "br-drought", "ready-drought", "slowtheflow"]
   });
@@ -287,7 +288,8 @@
       "Replace filters that look dark or dirty."
     ],
     live: [
-      { label: "Utah air quality now & forecast", src: "air-utah" },
+      { label: "Wasatch Front air quality now & forecast (HiveAir Utah)", src: "hiveair" },
+      { label: "Statewide air quality now & forecast (Utah DEQ)", src: "air-utah" },
       { label: "AirNow AQI", src: "airnow" },
       { label: "NWS Salt Lake City", src: "nws-slc" }
     ],
